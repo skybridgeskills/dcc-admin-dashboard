@@ -81,14 +81,14 @@ export const getCredentialLinks: PayloadHandler = async (req, res) => {
 
             const requestUrl = deepLinkUrl.searchParams.get('vc_request_url');
 
-            deepLinkUrl.searchParams.set('vc_request_url', `${requestUrl}/${token}`);
+            deepLinkUrl.searchParams.set('vc_request_url', `${requestUrl}`);
             deepLinkUrl.search = decodeURIComponent(deepLinkUrl.search);
 
             const vprDeepLinkUrl = new URL(result.vprDeepLink);
 
             const vprRequestUrl = vprDeepLinkUrl.searchParams.get('vc_request_url');
 
-            vprDeepLinkUrl.searchParams.set('vc_request_url', `${vprRequestUrl}/${token}`);
+            vprDeepLinkUrl.searchParams.set('vc_request_url', `${vprRequestUrl}`);
             vprDeepLinkUrl.search = decodeURIComponent(vprDeepLinkUrl.search);
 
             return {
@@ -102,7 +102,7 @@ export const getCredentialLinks: PayloadHandler = async (req, res) => {
                         service: [
                             {
                                 ...result.chapiVPR.interact.service[0],
-                                serviceEndpoint: `${result.chapiVPR.interact.service[0].serviceEndpoint}/${token}`,
+                                serviceEndpoint: `${result.chapiVPR.interact.service[0].serviceEndpoint}/${token}`, // hmmm
                             },
                             ...result.chapiVPR.interact.service.slice(1),
                         ],
