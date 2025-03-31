@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "moduleResolution": "nodenext",
+    "allowImportingTsExtensions": true,
     "module": "nodenext",
     "lib": [
       "dom",
@@ -14,17 +15,29 @@
     "skipLibCheck": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "jsx": "react",
+    "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
       "payload/generated-types": [
         "./src/payload-types.ts"
       ],
-      "@/*": ["./*"]
-    }
+      "@/*": [
+        "./*"
+      ]
+    },
+    "noEmit": true,
+    "incremental": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
-    "src"
+    "src",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
