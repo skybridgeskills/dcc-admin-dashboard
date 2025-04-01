@@ -19,6 +19,8 @@ export interface Config {
 export interface User {
   id: string;
   name?: string;
+  roles?: ('super' | 'user')[];
+  tenant?: string;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -46,7 +48,6 @@ export interface CredentialTemplate {
     | null;
   updatedAt: string;
   createdAt: string;
-  _status?: 'draft' | 'published';
 }
 export interface CredentialBatch {
   id: string;
@@ -79,7 +80,6 @@ export interface EmailTemplate {
   emailTemplatesHandlebarsCode: string;
   updatedAt: string;
   createdAt: string;
-  _status?: 'draft' | 'published';
 }
 export interface Credential {
   id: string;
