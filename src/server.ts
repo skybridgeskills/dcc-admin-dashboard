@@ -15,11 +15,15 @@ app.get("/", (_, res) => {
 app.use((req, res, next) => {
   const cookieHeader = req.headers.cookie || '';
   const tokenMatch = cookieHeader.match(/payload-token=([^;]+)/);
+
   if (tokenMatch) {
-    const { tenant, roles } = jwt.decode(tokenMatch[1]) as any;
-    if (roles.includes("super")) {
+    const { tenant, isAdmin } = jwt.decode(tokenMatch[1]) as any;
+
+    if (isAdmin) {
       return next()
     }
+
+    // check if user is on wrong domain
     if (tenant !== req.headers.host) {
       res.clearCookie('payload-token');
       return res.sendStatus(401);

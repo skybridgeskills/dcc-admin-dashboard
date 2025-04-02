@@ -6,6 +6,7 @@ import CredentialStatusCell from '../components/credential/CredentialStatusCell'
 import { CREDENTIAL_STATUS } from '../constants/credentials';
 import DefaultListView from '../components/List/DefaultListView';
 import CreateCredential from '../components/credential/CreateCredential';
+import { tenantAccessFilterQuery, setTenantOnCreate } from '../helpers/tenant';
 
 const CredentialsCollection: CollectionConfig = {
     slug: 'credential',
@@ -17,6 +18,7 @@ const CredentialsCollection: CollectionConfig = {
         components: { views: { List: DefaultListView, Edit: CreateCredential } },
     },
     access: {
+        read: tenantAccessFilterQuery,
         create: () => false,
         update: async ({ id }) => {
             try {
@@ -55,7 +57,9 @@ const CredentialsCollection: CollectionConfig = {
             }
         },
     },
+    hooks: { beforeChange: [setTenantOnCreate] },
     fields: [
+        { name: 'tenant', type: 'text', hidden: true },
         { name: 'credentialName', type: 'text' },
         { name: 'earnerName', type: 'text' },
         { name: 'emailAddress', type: 'email' },

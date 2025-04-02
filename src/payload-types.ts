@@ -19,7 +19,7 @@ export interface Config {
 export interface User {
   id: string;
   name?: string;
-  roles?: ('super' | 'user')[];
+  isAdmin?: boolean;
   tenant?: string;
   updatedAt: string;
   createdAt: string;
@@ -34,6 +34,7 @@ export interface User {
 }
 export interface CredentialTemplate {
   id: string;
+  tenant?: string;
   title: string;
   description?: string;
   internalNotes?: string;
@@ -51,6 +52,7 @@ export interface CredentialTemplate {
 }
 export interface CredentialBatch {
   id: string;
+  tenant?: string;
   title: string;
   description?: string;
   internalNotes?: string;
@@ -73,6 +75,7 @@ export interface CredentialBatch {
 }
 export interface EmailTemplate {
   id: string;
+  tenant?: string;
   title: string;
   internalNotes?: string;
   from?: string;
@@ -83,6 +86,7 @@ export interface EmailTemplate {
 }
 export interface Credential {
   id: string;
+  tenant?: string;
   credentialName?: string;
   earnerName?: string;
   emailAddress?: string;
