@@ -129,7 +129,7 @@ const SideNav: React.FC = () => {
                             <p
                                 className={`text-start m-0 transition-[font-size] font-inter text-lg font-medium`}
                             >
-                                {(user.name as string) || 'Unknown User'}
+                                {user.name as string}
                             </p>
                             <p className={`text-start text-base m-0 transition-[font-size]`}>
                                 {user.email}
