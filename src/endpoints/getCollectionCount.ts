@@ -6,6 +6,7 @@ export const getCollectionCount: PayloadHandler = async (req, res) => {
     if (!req.user) return res.sendStatus(401);
     const collectionName = req?.body?.collectionName;
     const payloadQuery = req?.body?.query;
+    payloadQuery["tenant"] = req.headers.host;
 
     try {
         const data = await payload.collections[collectionName].Model.count({ ...payloadQuery });

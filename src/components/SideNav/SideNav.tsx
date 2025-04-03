@@ -111,10 +111,11 @@ const SideNav: React.FC = () => {
                     <span className={`transition-[font-size]`}>Email Templates</span>
                 </NavLink>
 
+                { user.isAdmin ? 
                 <NavLink className="navbar-buttons" to="/admin/collections/users" onClick={close}>
                     <img src={Users} alt="users" />
                     <span className={`transition-[font-size]`}>Users</span>
-                </NavLink>
+                </NavLink> : null }
             </section>
 
             <footer className="flex flex-col gap-8">

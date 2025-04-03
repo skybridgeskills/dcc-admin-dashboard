@@ -5,11 +5,13 @@ import payload from 'payload';
 import { CREDENTIAL_BATCH_STATUS } from '../constants/batches';
 import CredentialBatchStatusCell from '../components/batch/CredentialBatchStatusCell';
 import { duplicateBatch } from '../endpoints/duplicateBatch';
+import { tenantAccessFilterQuery, setTenantOnCreate } from '../helpers/tenant';
 
 const CredentialsBatchesCollection: CollectionConfig = {
     slug: 'credential-batch',
     labels: { plural: 'Issuance Overview' },
     access: {
+        read: tenantAccessFilterQuery,
         delete: async ({ id }) => {
             try {
                 if (!id) return true;
@@ -63,7 +65,9 @@ const CredentialsBatchesCollection: CollectionConfig = {
         },
     },
     endpoints: [{ path: '/:id/duplicate', method: 'post', handler: duplicateBatch }],
+    hooks: { beforeChange: [setTenantOnCreate] },
     fields: [
+        { name: 'tenant', type: 'text', hidden: true },
         {
             name: 'title',
             label: 'Batch Title',
