@@ -1,0 +1,11 @@
+packages:
+    - '**' # or whatever your monorepo layout is
+ignoredBuiltDependencies:
+    - sharp
+supportedArchitectures:
+    os:
+        - linux
+        - current
+    cpu:
+        - x64
+        - arm64
