@@ -1,6 +1,6 @@
 FROM node:18.12-alpine as base
 
-FROM base as builder
+FROM node:18 as builder
 
 WORKDIR /home/node/app
 
@@ -8,6 +8,8 @@ COPY . .
 
 RUN npm i -g pnpm
 RUN pnpm i
+RUN npm rebuild --platform=linux --arch=x64 sharp
+RUN npm rebuild --platform=linux --arch=arm64 sharp
 
 RUN pnpm build
 
