@@ -110,7 +110,6 @@ const SideNav: React.FC = () => {
                     <img src={MailPlus} alt="email-template" />
                     <span className={`transition-[font-size]`}>Email Templates</span>
                 </NavLink>
-
                 <NavLink className="navbar-buttons" to="/admin/collections/users" onClick={close}>
                     <img src={Users} alt="users" />
                     <span className={`transition-[font-size]`}>Users</span>

@@ -2,6 +2,7 @@ import { CollectionConfig } from 'payload/types';
 import CreateEmailTemplate from '../components/email-template/CreateEmailTemplate';
 import CodeEditorWithCsvValidation from '../components/email-template/CodeEditorWithCsvValidation';
 import EmailPageDescription from '../components/Email/EmailPageDescription';
+import { tenantAccessFilterQuery, setTenantOnCreate } from '../helpers/tenant';
 
 const placeholderEmailData = `
   <html>
@@ -28,7 +29,10 @@ const EmailTemplatesCollection: CollectionConfig = {
             },
         },
     },
+    access: { read: tenantAccessFilterQuery },
+    hooks: { beforeChange: [setTenantOnCreate] },
     fields: [
+        { name: 'tenant', type: 'text', hidden: true },
         {
             name: 'title',
             type: 'text',

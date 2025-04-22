@@ -47,7 +47,7 @@ export default buildConfig({
         fromName: 'DCC',
         fromAddress: 'chartraj@mit.edu',
     },
-    serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000',
+    serverURL: "",
     cors: '*',
     admin: {
         css: require.resolve('./components/global.scss'),
@@ -111,7 +111,7 @@ export default buildConfig({
         { method: 'post', path: '/get-collection-count', handler: getCollectionCount },
         { method: 'get', path: '/get-credential-links', handler: getCredentialLinks },
         { method: 'post', path: '/exchange/:a/:b/:token', handler: forwardExchangeRequest },
-        { method: 'post', path: '/revoke-credential/:id', handler: revokeCredential },
+        // { method: 'post', path: '/revoke-credential/:id', handler: revokeCredential },
     ],
     typescript: {
         outputFile: path.resolve(__dirname, 'payload-types.ts'),
@@ -119,4 +119,9 @@ export default buildConfig({
     graphQL: {
         schemaOutputFile: path.resolve(__dirname, 'generated-schema.graphql'),
     },
+    express: {
+  		json: {
+  			limit: 1024 * 4,
+  		}
+	}
 });

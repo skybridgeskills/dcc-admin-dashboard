@@ -1,6 +1,7 @@
 import express from "express";
 import payload from "payload";
 import path from "path";
+import jwt from 'jsonwebtoken';
 
 require("dotenv").config();
 const app = express();
@@ -10,6 +11,27 @@ app.use("/assets", express.static(path.resolve(__dirname, "./assets")));
 app.get("/", (_, res) => {
   res.redirect("/admin");
 });
+
+app.use((req, res, next) => {
+  const cookieHeader = req.headers.cookie || '';
+  const tokenMatch = cookieHeader.match(/payload-token=([^;]+)/);
+
+  if (tokenMatch) {
+    const { tenant, isAdmin } = jwt.decode(tokenMatch[1]) as any;
+
+    if (isAdmin) {
+      console.log("admin accessed tenant: ", tenant)
+      return next()
+    }
+
+    // check if user is on wrong domain
+    if (tenant !== req.headers.host) {
+      res.clearCookie('payload-token');
+      return res.sendStatus(401);
+    }
+  }
+  return next();
+})
 
 const start = async () => {
   // Initialize Payload
