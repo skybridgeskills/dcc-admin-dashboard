@@ -20,6 +20,7 @@ app.use((req, res, next) => {
     const { tenant, isAdmin } = jwt.decode(tokenMatch[1]) as any;
 
     if (isAdmin) {
+      console.log("admin accessed tenant: ", tenant)
       return next()
     }
 
