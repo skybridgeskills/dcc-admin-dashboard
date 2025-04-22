@@ -15,9 +15,12 @@ const Users: CollectionConfig = {
     components: { views: { Edit: CreateUser } },
   },
   access: {
-    read: (args) => isAdmin(args) ?
-      tenantAccessFilterQuery(args) : { id: { equals: args.req.user.id } },
+    read: ({ req }) => ({ tenant: { equals: req.headers.host } }),
     create: (args) => isAdmin(args) ?
+      tenantAccessFilterQuery(args) : false,
+    update: (args) => isAdmin(args) ?
+      tenantAccessFilterQuery(args) : false,
+    delete: (args) => isAdmin(args) ?
       tenantAccessFilterQuery(args) : false,
   },
   hooks: { beforeChange: [setTenantOnCreate] },
