@@ -9,10 +9,10 @@ const redisUrl = process.env.REDIS_URL ?? 'localhost';
 const redisPort = Number(process.env.REDIS_PORT ?? '6379');
 
 // redis settings...
-// const connection = {
-//     host: redisUrl,
-//     port: redisPort,
-// };
+const connection = {
+    host: redisUrl,
+    port: redisPort,
+};
 
 type AugmentedQueue<T> = Queue<T> & {
     events: QueueEvents;
@@ -36,20 +36,20 @@ const flowProducer = new FlowProducer({ connection });
  */
 export function registerQueue<T>(name: string, processor: Processor<T>) {
     if (!registeredQueues[name]) {
-        // const queue = new Queue(name, { connection });
-        // const queueEvents = new QueueEvents(name, {
-        //     connection,
-        // });
-        // const worker = new Worker<T>(name, processor, {
-        //     connection,
-        //     lockDuration: 1000 * 60 * 15,
-        //     concurrency: 8,
-        // });
-        // registeredQueues[name] = {
-        //     queue,
-        //     queueEvents,
-        //     worker,
-        // };
+        const queue = new Queue(name, { connection });
+        const queueEvents = new QueueEvents(name, {
+            connection,
+        });
+        const worker = new Worker<T>(name, processor, {
+            connection,
+            lockDuration: 1000 * 60 * 15,
+            concurrency: 8,
+        });
+        registeredQueues[name] = {
+            queue,
+            queueEvents,
+            worker,
+        };
     }
     const queue = registeredQueues[name].queue as AugmentedQueue<T>;
     queue.events = registeredQueues[name].queueEvents;
@@ -109,14 +109,14 @@ export const emailsFinishedQueue = registerQueue(
 );
 
 export const sendEmails = async (batchId: string, emails: Email[]) => {
-    // return flowProducer.add({
-    //     name: `send-emails-for-${batchId}`,
-    //     queueName: 'emailsFinished',
-    //     data: { batchId },
-    //     children: emails.map(email => ({
-    //         name: email.credentialId || email.to,
-    //         queueName: 'email',
-    //         data: email,
-    //     })),
-    // });
+    return flowProducer.add({
+        name: `send-emails-for-${batchId}`,
+        queueName: 'emailsFinished',
+        data: { batchId },
+        children: emails.map(email => ({
+            name: email.credentialId || email.to,
+            queueName: 'email',
+            data: email,
+        })),
+    });
 };
