@@ -8,6 +8,9 @@ import { CREDENTIAL_STATUS } from '../constants/credentials';
 const redisUrl = process.env.REDIS_URL ?? 'localhost';
 const redisPort = Number(process.env.REDIS_PORT ?? '6379');
 
+
+const isBuildContext = process.argv.includes('build');
+
 // redis settings...
 const connection = {
     host: redisUrl,
@@ -27,7 +30,7 @@ declare global {
 }
 const registeredQueues = global.__registeredQueues || (global.__registeredQueues = {});
 
-const flowProducer = new FlowProducer({ connection });
+const flowProducer = isBuildContext ? null : new FlowProducer({ connection });
 
 /**
  *
@@ -35,6 +38,7 @@ const flowProducer = new FlowProducer({ connection });
  * @param processor
  */
 export function registerQueue<T>(name: string, processor: Processor<T>) {
+    if (isBuildContext) return;
     if (!registeredQueues[name]) {
         const queue = new Queue(name, { connection });
         const queueEvents = new QueueEvents(name, {
