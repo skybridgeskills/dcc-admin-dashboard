@@ -88,6 +88,10 @@ export default buildConfig({
             },
         }),
     },
+    upload: {
+        disableLocalStorage: false,
+        disableImages: true,
+    },
     collections: [
         Users,
         CredentialsTemplatesCollection,
