@@ -27,7 +27,7 @@ declare global {
 }
 const registeredQueues = global.__registeredQueues || (global.__registeredQueues = {});
 
-// const flowProducer = new FlowProducer({ connection });
+const flowProducer = new FlowProducer({ connection });
 
 /**
  *
