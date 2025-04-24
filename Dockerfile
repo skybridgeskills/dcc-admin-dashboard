@@ -8,6 +8,8 @@ COPY . .
 
 RUN npm i -g pnpm
 RUN pnpm i
+RUN npm rebuild --platform=linux --arch=x64 sharp
+RUN npm rebuild --platform=linux --arch=arm64 sharp
 
 RUN pnpm build
 
