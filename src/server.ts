@@ -3,6 +3,7 @@ import payload from 'payload';
 import path from 'path';
 import jwt from 'jsonwebtoken';
 import { injestSecrets } from './utils/secretsManager';
+import { toTenant } from './helpers/tenant';
 
 require('dotenv').config();
 const app = express();
@@ -26,7 +27,7 @@ app.use((req, res, next) => {
         }
 
         // check if user is on wrong domain
-        if (tenant !== req.headers.host) {
+        if (tenant !== toTenant(req.headers.host)) {
             res.clearCookie('payload-token');
             return res.sendStatus(401);
         }

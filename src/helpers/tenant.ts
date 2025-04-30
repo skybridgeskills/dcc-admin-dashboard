@@ -13,9 +13,12 @@ export const tenantAccessFilterQuery: Access = ({ req }) => {
 export const setTenantOnCreate: CollectionBeforeChangeHook =
   ({ data, req, operation, originalDoc }) => {
     if (operation === "create") {
-      data["tenant"] = req.headers.host;
+      data["tenant"] = req.headers.host.replace(":", "-");
       return data;
     }
     return originalDoc;
   }
 
+export const toTenant = (host: string): string => host.replace(":", "-");
+
+// Tenant is stored in aws as a secret so Must be a valid name containing alphanumeric characters, or any of the following: -/_+=.@!
