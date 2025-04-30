@@ -3,6 +3,7 @@ import {
     GetSecretValueCommand,
     ListSecretsCommand,
 } from '@aws-sdk/client-secrets-manager';
+import { ResourceNotFoundException } from '@aws-sdk/client-secrets-manager';
 
 // Global storage for tenant secrets
 export const tenantSecrets: Record<string, any> = {};
@@ -22,14 +23,30 @@ export async function injestSecrets() {
 
         for (const secret of listResponse.SecretList) {
             try {
-                const getCommand = new GetSecretValueCommand({ SecretId: secret.Name });
+                // Try to get the secret with version stage
+                const getCommand = new GetSecretValueCommand({
+                    SecretId: secret.Name,
+                    VersionStage: 'AWSCURRENT',
+                });
+
                 const getResponse = await secretsClient.send(getCommand);
                 if (getResponse.SecretString) {
-                    tenantSecrets[secret.Name] = getResponse.SecretString;
+                    try {
+                        // Try to parse as JSON, if it fails, store as string
+                        tenantSecrets[secret.Name] = JSON.parse(getResponse.SecretString);
+                    } catch {
+                        tenantSecrets[secret.Name] = getResponse.SecretString;
+                    }
                     console.log(`Loaded secret: ${secret.Name}`);
                 }
             } catch (error) {
-                console.error(`Failed to load secret ${secret.Name}:`, error.message);
+                if (error instanceof ResourceNotFoundException) {
+                    console.log(
+                        `Secret ${secret.Name} exists but has no current version. Skipping...`
+                    );
+                } else {
+                    console.error(`Failed to load secret ${secret.Name}:`, error.message);
+                }
             }
         }
     } catch (error) {
@@ -43,14 +60,23 @@ export async function refreshSecretFor(tenant: string): Promise<void> {
         const secretResponse = await secretsClient.send(
             new GetSecretValueCommand({
                 SecretId: `/tenants/${tenant}/credentials`,
+                VersionStage: 'AWSCURRENT',
             })
         );
 
         if (secretResponse.SecretString) {
-            tenantSecrets[tenant] = JSON.parse(secretResponse.SecretString);
+            try {
+                tenantSecrets[tenant] = JSON.parse(secretResponse.SecretString);
+            } catch {
+                tenantSecrets[tenant] = secretResponse.SecretString;
+            }
         }
     } catch (error) {
-        console.error(`Failed to fetch secrets for tenant ${tenant}:`, error);
+        if (error instanceof ResourceNotFoundException) {
+            console.log(`Secret for tenant ${tenant} exists but has no current version.`);
+        } else {
+            console.error(`Failed to fetch secrets for tenant ${tenant}:`, error);
+        }
         throw error;
     }
 }
