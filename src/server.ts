@@ -19,10 +19,9 @@ app.use((req, res, next) => {
     const tokenMatch = cookieHeader.match(/payload-token=([^;]+)/);
 
     if (tokenMatch) {
-        const { tenant, isAdmin } = jwt.decode(tokenMatch[1]) as any;
-
+        const { tenant, isAdmin, email } = jwt.decode(tokenMatch[1]) as any;
         if (isAdmin) {
-            console.log('admin accessed tenant: ', tenant);
+            console.log(`Admin ${email} accessed tenant ${tenant}: ${req.method} ${req.path}`);
             return next();
         }
 
