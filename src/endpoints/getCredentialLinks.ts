@@ -3,7 +3,6 @@ import { PayloadHandler } from 'payload/config';
 import payload from 'payload';
 import jwt from 'jsonwebtoken';
 import { insertValuesIntoHandlebarsJsonTemplate } from '../helpers/handlebarhelpers';
-import { getTenantSecrets } from '../utils/secretsManager';
 
 const coordinatorUrl = process.env.COORDINATOR_URL ?? 'http://localhost:4005';
 const secret =
@@ -52,12 +51,6 @@ export const getCredentialLinks: PayloadHandler = async (req, res) => {
         builtCredential.id = `urn:uuid:${id}`;
         if (typeof builtCredential?.issuer === 'string') builtCredential.issuer = {};
         if ('id' in (builtCredential?.issuer ?? {})) delete builtCredential.issuer.id;
-
-        // Get tenant secrets from our global storage
-        const tenantSecret = getTenantSecrets(credential.tenant);
-        if (!tenantSecret) {
-            throw new Error(`No secrets found for tenant ${credential.tenant}`);
-        }
 
         const fetchResponse = await fetch(`${coordinatorUrl}/exchange/setup`, {
             method: 'POST',

@@ -4,14 +4,15 @@ import {
     ListSecretsCommand,
 } from '@aws-sdk/client-secrets-manager';
 import { ResourceNotFoundException } from '@aws-sdk/client-secrets-manager';
+import { toTenant } from '../helpers/tenant';
 
-// Global storage for tenant secrets
-export const tenantSecrets: Record<string, any> = {};
+//  Storage for tenant secrets
+const TENANTS: Record<string, any> = {};
 
 // Initialize secrets manager client
 const secretsClient = new SecretsManagerClient({});
 
-export async function injestSecrets() {
+export async function ingestSecrets() {
     try {
         const listCommand = new ListSecretsCommand({});
         const listResponse = await secretsClient.send(listCommand);
@@ -33,9 +34,9 @@ export async function injestSecrets() {
                 if (getResponse.SecretString) {
                     try {
                         // Try to parse as JSON, if it fails, store as string
-                        tenantSecrets[secret.Name] = JSON.parse(getResponse.SecretString);
+                        TENANTS[secret.Name] = JSON.parse(getResponse.SecretString);
                     } catch {
-                        tenantSecrets[secret.Name] = getResponse.SecretString;
+                        TENANTS[secret.Name] = getResponse.SecretString;
                     }
                     console.log(`Loaded secret: ${secret.Name}`);
                 }
@@ -66,9 +67,9 @@ export async function refreshSecretFor(tenant: string): Promise<void> {
 
         if (secretResponse.SecretString) {
             try {
-                tenantSecrets[tenant] = JSON.parse(secretResponse.SecretString);
+                TENANTS[tenant] = JSON.parse(secretResponse.SecretString);
             } catch {
-                tenantSecrets[tenant] = secretResponse.SecretString;
+                TENANTS[tenant] = secretResponse.SecretString;
             }
         }
     } catch (error) {
@@ -81,7 +82,6 @@ export async function refreshSecretFor(tenant: string): Promise<void> {
     }
 }
 
-// Function to get secrets for a tenant
-export function getTenantSecrets(tenant: string): any {
-    return tenantSecrets[tenant];
+export function getTenant(origin: string): any {
+    return TENANTS[`/tenants/${toTenant(origin)}/credentials`];
 }

@@ -13,7 +13,9 @@ export const tenantAccessFilterQuery: Access = ({ req }) => {
 export const setTenantOnCreate: CollectionBeforeChangeHook =
   ({ data, req, operation, originalDoc }) => {
     if (operation === "create") {
-      data["tenant"] = toTenant(req.headers.host);
+      if (data["tenant"] === undefined) {
+        data["tenant"] = toTenant(req.headers.host);
+      }
       return data;
     }
     return originalDoc;

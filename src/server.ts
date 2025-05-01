@@ -2,7 +2,7 @@ import express from 'express';
 import payload from 'payload';
 import path from 'path';
 import jwt from 'jsonwebtoken';
-import { injestSecrets } from './utils/secretsManager';
+import { ingestSecrets } from './utils/tenantConfigs';
 import { toTenant } from './helpers/tenant';
 
 require('dotenv').config();
@@ -44,7 +44,7 @@ const start = async () => {
             payload.logger.info(`Payload Admin URL: ${payload.getAdminURL()}`);
 
             // Initialize secrets for all tenants
-            await injestSecrets();
+            await ingestSecrets();
         },
     });
 

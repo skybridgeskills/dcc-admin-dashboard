@@ -2,10 +2,11 @@ import { PayloadHandler } from 'payload/config';
 import { Forbidden } from 'payload/errors';
 import payload from 'payload';
 import { CREDENTIAL_STATUS } from '../constants/credentials';
+import { toTenant } from '../helpers/tenant';
 
 export const createBatchCredentials: PayloadHandler = async (req, res) => {
     if (!req.user) throw new Forbidden();
-
+    const host = req.headers.host
     try {
         console.log('//req body', req?.body);
         const id = req?.body?.batchId;
@@ -22,6 +23,7 @@ export const createBatchCredentials: PayloadHandler = async (req, res) => {
                         extraFields: record,
                         status: CREDENTIAL_STATUS.DRAFT,
                         batch: id,
+                        tenant: toTenant(host) 
                     },
                     locale: 'en',
                 });
