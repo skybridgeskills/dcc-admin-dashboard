@@ -80,6 +80,7 @@ export const sendBatchEmail: PayloadHandler = async (req, res, next) => {
             subject: emailTemplateRecord?.emailSubjectTitle || 'Claim Credential',
             email: 'test email2',
             html: `${parsedHtml}`,
+            tenant: record.tenant,
         };
     });
 
