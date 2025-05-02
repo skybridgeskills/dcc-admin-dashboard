@@ -4,15 +4,17 @@ import {
     ListSecretsCommand,
 } from '@aws-sdk/client-secrets-manager';
 import { ResourceNotFoundException } from '@aws-sdk/client-secrets-manager';
+import { S3Client, GetObjectCommand, NoSuchKey } from '@aws-sdk/client-s3';
 import { toTenant } from '../helpers/tenant';
 
 //  Storage for tenant secrets
 const TENANTS: Record<string, any> = {};
 
-// Initialize secrets manager client
+// Initialize AWS clients
 const secretsClient = new SecretsManagerClient({});
+const s3Client = new S3Client({});
 
-export async function ingestSecrets() {
+export async function ingestTenantsFromAws() {
     try {
         const listCommand = new ListSecretsCommand({});
         const listResponse = await secretsClient.send(listCommand);
@@ -34,7 +36,48 @@ export async function ingestSecrets() {
                 if (getResponse.SecretString) {
                     try {
                         // Try to parse as JSON, if it fails, store as string
-                        TENANTS[secret.Name] = JSON.parse(getResponse.SecretString);
+                        const secretData = JSON.parse(getResponse.SecretString);
+
+                        // Get additional configuration from S3
+                        try {
+                            const tenantName = secret.Name.split('/')[1]; // Extract tenant name from secret path
+                            const configCommand = new GetObjectCommand({
+                                Bucket:
+                                    process.env.TENANT_CONFIG_BUCKET ||
+                                    'dcc-brand-6e8f40c02581a52e',
+                                Key: `${tenantName}/config.json`,
+                            });
+
+                            const configResponse = await s3Client.send(configCommand);
+                            const configData = await configResponse.Body?.transformToString();
+
+                            if (configData) {
+                                const additionalConfig = JSON.parse(configData);
+                                TENANTS[secret.Name] = {
+                                    ...secretData,
+                                    config: additionalConfig,
+                                };
+                                console.log(
+                                    `Loaded secret: ${
+                                        secret.Name
+                                    } with additional config: ${JSON.stringify(additionalConfig)}`
+                                );
+                            } else {
+                                TENANTS[secret.Name] = secretData;
+                            }
+                        } catch (s3Error) {
+                            if (s3Error instanceof NoSuchKey) {
+                                console.log(
+                                    `No additional configuration found in S3 for ${secret.Name}`
+                                );
+                            } else {
+                                console.error(
+                                    `Error fetching S3 config for ${secret.Name}:`,
+                                    s3Error
+                                );
+                            }
+                            TENANTS[secret.Name] = secretData;
+                        }
                     } catch {
                         TENANTS[secret.Name] = getResponse.SecretString;
                     }
