@@ -5,6 +5,7 @@ import Handlebars from 'handlebars';
 import { emailQueue } from '../jobs/queue.server';
 import { generateJwtFromId } from '../helpers/jwtHelpers';
 import { CREDENTIAL_STATUS } from '../constants/credentials';
+import { getTenant } from '../utils/tenantConfigs';
 
 export const sendEmail: PayloadHandler = async (req, res) => {
     if (!req.user) return res.sendStatus(400);
@@ -34,12 +35,12 @@ export const sendEmail: PayloadHandler = async (req, res) => {
     const emailTemplateRecord =
         typeof emailTemplateField === 'string'
             ? await payload.findByID({
-                collection: 'email-template',
-                id: emailTemplateField,
-                depth: 2,
-                showHiddenFields: true,
-                locale: 'en',
-            })
+                  collection: 'email-template',
+                  id: emailTemplateField,
+                  depth: 2,
+                  showHiddenFields: true,
+                  locale: 'en',
+              })
             : emailTemplateField;
 
     // email template code
@@ -49,10 +50,10 @@ export const sendEmail: PayloadHandler = async (req, res) => {
 
     const handlebarsTemplate = Handlebars.compile(emailTemplate);
 
-    const claimPageBaseUrl = process.env.CLAIM_PAGE_URL || 'https://localhost:4321';
+    const { claim_url: claimPageBaseUrl } = getTenant(credential.tenant);
 
     const jwt = generateJwtFromId(credential.id);
-    const link = `${claimPageBaseUrl}/?token=${jwt}`;
+    const link = `${claimPageBaseUrl}/?token=${jwt}&tenant=${credential.tenant}`;
     // replace handlebar variables in email template with record data
     const mergedRecordWithLink = {
         ...(credential.extraFields as any),

@@ -4,10 +4,11 @@ import { Queue, Worker } from 'bullmq';
 import payload from 'payload';
 import { CREDENTIAL_BATCH_STATUS } from '../constants/batches';
 import { CREDENTIAL_STATUS } from '../constants/credentials';
+import nodemailer from 'nodemailer';
+import { getTenant } from '../utils/tenantConfigs';
 
 const redisUrl = process.env.REDIS_URL ?? 'localhost';
 const redisPort = Number(process.env.REDIS_PORT ?? '6379');
-
 
 const isBuildContext = process.argv.includes('build');
 
@@ -61,6 +62,7 @@ export function registerQueue<T>(name: string, processor: Processor<T>) {
 }
 
 export type Email = {
+    tenant: string;
     credentialId?: string;
     to: string;
     from?: string;
@@ -77,17 +79,28 @@ the registerQueue function, BullMQ will spawn a new process to run the file.
 These are called sandboxed processors."
 */
 export const emailQueue = registerQueue('email', async (job: Job<Email>) => {
-    console.log('///emailQueue job', job);
+    // console.log('///emailQueue job', job);
 
-    const { to, from, subject, text, html, credentialId } = job.data;
+    const { to, subject, text, html, credentialId, tenant } = job.data;
 
-    await payload.sendEmail({
+    const { smtp } = getTenant(tenant);
+
+    const transporter = nodemailer.createTransport({
+        host: smtp.host,
+        port: smtp.port,
+        secure: smtp.secure,
+        auth: {
+            user: smtp.user,
+            pass: smtp.password,
+        },
+    });
+
+    await transporter.sendMail({
+        from: smtp.from,
         to,
         subject,
         text,
         html,
-        from:
-            from || process.env.EMAIL_FROM || 'Learning Economy <beestontaylor@learningeconomy.io>',
     });
 
     if (credentialId) {
@@ -102,7 +115,7 @@ export const emailQueue = registerQueue('email', async (job: Job<Email>) => {
 export const emailsFinishedQueue = registerQueue(
     'emailsFinished',
     async (job: Job<{ batchId: string }>) => {
-        console.log('///emailsFinishedQueu job', job);
+        // console.log('///emailsFinishedQueu job', job);
 
         return payload.update({
             collection: 'credential-batch',

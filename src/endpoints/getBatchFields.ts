@@ -39,7 +39,7 @@ export const getBatchFields: PayloadHandler = async (req, res) => {
 
         await payload.update({
             collection: 'credential-batch',
-            id,
+            where: { id: { equals: id } },
             data: { csvFields: fields },
         });
 
