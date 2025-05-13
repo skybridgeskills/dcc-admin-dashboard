@@ -28,9 +28,9 @@ export const getCredentialLinks: PayloadHandler = async (req, res) => {
         const credential = await payload.findByID({ id, collection: 'credential', depth: 3 });
 
         if (
-            typeof credential?.batch === 'string' ||
-            typeof credential.batch.template === 'string' ||
-            !credential.batch.template.credentialTemplateJson
+            typeof credential?.batch === 'string'
+            || typeof credential.batch.template === 'string'
+            || !credential.batch.template.credentialTemplateJson
         ) {
             return res.sendStatus(404);
         }

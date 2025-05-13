@@ -54,13 +54,17 @@ export const sendBatchEmail: PayloadHandler = async (req, res, next) => {
 
     const handlebarsTemplate = Handlebars.compile(emailTemplate);
 
-    //for each record, generate email link and queue up email to be sent
+    // for each record, generate email link and queue up email to be sent
 
-    const { claim_url: claimPageBaseUrl } = getTenant(emailTemplateRecord.tenant);
+    const tenant = getTenant(emailTemplateRecord.tenant);
+
+    if(!tenant.config.claim_url) {
+        throw Error("Missing claim_url for tenant: " + emailTemplateRecord.tenant)
+    }
 
     const emails = data?.docs?.map(record => {
         const jwt = generateJwtFromId(record?.id);
-        const link = `${claimPageBaseUrl}/?token=${jwt}&tenant=${record.tenant}`;
+        const link = `${tenant.config.claim_url}/claim?token=${jwt}`;
         console.log('LINK: ', link);
         // replace handlebar variables in email template with record data
         const mergedRecordWithLink = {
