@@ -11,14 +11,11 @@ export const tenantAccessFilterQuery: Access = ({ req }) => {
 }
 
 export const setTenantOnCreate: CollectionBeforeChangeHook =
-  ({ data, req, operation, originalDoc }) => {
-    if (operation === "create") {
-      if (data["tenant"] === undefined) {
-        data["tenant"] = toTenant(req.headers.host);
-      }
-      return data;
+  ({ data, req, operation }) => {
+    if (operation === "create" && !data["tenant"]) {
+      data["tenant"] = toTenant(req.headers.host);
     }
-    return originalDoc;
+    return data;
   }
 
 export const toTenant = (host: string): string => host.replace(":", "-");
