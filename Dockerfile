@@ -23,6 +23,7 @@ COPY package.json ./
 
 RUN npm i -g pnpm
 RUN pnpm i --production
+RUN pnpm run build
 
 COPY --from=builder /home/node/app/dist ./dist
 COPY --from=builder /home/node/app/build ./build
