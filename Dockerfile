@@ -12,6 +12,8 @@ RUN npm rebuild --platform=linux --arch=x64 sharp
 RUN npm rebuild --platform=linux --arch=arm64 sharp
 
 RUN pnpm build
+RUN ls -la dist/
+RUN test -f dist/server.js || echo "server.js NOT FOUND!"
 
 FROM base as runtime
 
@@ -23,11 +25,12 @@ COPY package.json ./
 
 RUN npm i -g pnpm
 RUN pnpm i --production
-RUN pnpm run build
 
-COPY --from=builder /home/node/app/dist ./dist
-COPY --from=builder /home/node/app/build ./build
+COPY --from=builder /home/node/app/dist/ ./dist
+COPY --from=builder /home/node/app/build/ ./build
 
 EXPOSE 3000
+RUN ls -la /home/node/app/dist/
+RUN test -f /home/node/app/dist/server.js || echo "MISSING FILE IN FINAL IMAGE"
 
 CMD ["node", "dist/server.js"]
