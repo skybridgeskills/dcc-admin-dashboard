@@ -67,6 +67,7 @@ export const sendEmail: PayloadHandler = async (req, res) => {
     const parsedHtml = handlebarsTemplate(mergedRecordWithLink);
 
     const email = {
+        tenant: credential.tenant,
         to: credential.emailAddress,
         from: credential.batch.from || emailTemplateRecord.from,
         subject: emailTemplateRecord?.emailSubjectTitle || 'Claim Credential',

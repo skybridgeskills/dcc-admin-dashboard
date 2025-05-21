@@ -7,7 +7,7 @@ import { insertValuesIntoHandlebarsJsonTemplate } from '../helpers/handlebarhelp
 const secret =
     process.env.PAYLOAD_SECRET ??
     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaa';
-const expires = process.env.TOKEN_EXPIRATION_TIME_IN_SECONDS;
+const expires = parseInt(process.env.TOKEN_EXPIRATION_TIME_IN_SECONDS ?? '') ?? 14 * 24 * 60 * 60; // Default to 2 weeks
 
 export const getCredential: PayloadHandler = async (req, res) => {
     let id: string;
@@ -76,7 +76,7 @@ export const getCredentialJwt: PayloadHandler = async (req, res) => {
     if (!id || typeof id !== 'string') return res.sendStatus(400);
 
     try {
-        const token = jwt.sign({ id }, secret, { ...(expires && { expiresIn: expires }) });
+        const token = jwt.sign({ id }, secret, { ...(expires && { expiresIn: parseInt(expires) }) });
 
         res.status(200).json({ token });
     } catch (error) {
