@@ -21,7 +21,10 @@ app.use((req, res, next) => {
     if (tokenMatch) {
         const { tenant, isAdmin, email } = jwt.decode(tokenMatch[1]) as any;
         if (isAdmin) {
-            console.log(`Admin ${email} accessed tenant ${tenant}: ${req.method} ${req.path}`);
+            // Only log if the path doesn't end with a file extension
+            if (!req.path.split('/').pop()?.includes('.')) {
+                console.log(`Admin ${email} accessed tenant ${tenant}: ${req.method} ${req.path}`);
+            }
             return next();
         }
 
