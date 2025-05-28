@@ -28,25 +28,6 @@ import DashboardRedirect from './components/DashboardRedirect';
 import AccountSettings from './components/AccountSettings';
 
 export default buildConfig({
-    email: {
-        transportOptions: {
-            host: process.env.SMTP_HOST,
-            transportMethod: 'SMTP',
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS,
-            },
-            port: 587,
-            secure: false, // use TLS
-            tls: {
-                // do not fail on invalid certs
-                rejectUnauthorized: false,
-            },
-        },
-        //logMockCredentials: true,
-        fromName: 'DCC',
-        fromAddress: 'chartraj@mit.edu',
-    },
     serverURL: "",
     cors: '*',
     admin: {

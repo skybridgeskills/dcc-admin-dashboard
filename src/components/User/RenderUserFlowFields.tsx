@@ -25,6 +25,7 @@ const RenderSlide = React.forwardRef<HTMLElement, RenderSlideProps>(function Ren
     { formProps, children },
     ref
 ) {
+    // @ts-ignore
     const { t, i18n } = useTranslation('general');
     const operation = useOperation();
 

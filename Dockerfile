@@ -1,6 +1,6 @@
-FROM node:18.12-alpine as base
+FROM node:18.12-alpine AS base
 
-FROM node:18 as builder
+FROM node:18 AS builder
 
 WORKDIR /home/node/app
 
@@ -16,7 +16,7 @@ RUN pnpm typecheck
 RUN ls -la dist/
 RUN test -f dist/server.js || echo "server.js NOT FOUND!"
 
-FROM base as runtime
+FROM base AS runtime
 
 ENV NODE_ENV=production
 ENV PAYLOAD_CONFIG_PATH=dist/payload.config.js
