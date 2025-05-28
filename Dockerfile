@@ -12,6 +12,7 @@ RUN npm rebuild --platform=linux --arch=x64 sharp
 RUN npm rebuild --platform=linux --arch=arm64 sharp
 
 RUN pnpm build
+RUN pnpm typecheck
 RUN ls -la dist/
 RUN test -f dist/server.js || echo "server.js NOT FOUND!"
 

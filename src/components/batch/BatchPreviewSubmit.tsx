@@ -44,14 +44,14 @@ const BatchPreviewSubmit = React.forwardRef<HTMLElement, BatchPreviewSubmitProps
 
                 <Accordion type="single" className="mb-5" defaultValue="batch">
                     <AccordionItem value="batch">
-                        <AccordionTrigger>Batch: {fields.title.value}</AccordionTrigger>
+                        <AccordionTrigger>Batch: {fields.title.value as string}</AccordionTrigger>
                         <AccordionContent>
                             <section className="p-5 rounded-lg bg-white flex flex-col items-start gap-2 mb-5 dark:bg-slate-900">
                                 <h5 className="text-slate-600 font-inter text-lg dark:text-slate-400">
                                     Description
                                 </h5>
                                 <p className="m-0 text-slate-900 font-inter font-normal text-base dark:text-slate-100">
-                                    {fields.description.value}
+                                    {fields.description.value as string}
                                 </p>
                             </section>
 
@@ -60,7 +60,7 @@ const BatchPreviewSubmit = React.forwardRef<HTMLElement, BatchPreviewSubmitProps
                                     Internal Notes
                                 </h5>
                                 <p className="m-0 text-slate-900 font-inter font-normal text-base dark:text-slate-100">
-                                    {fields.internalNotes.value}
+                                    {fields.internalNotes.value as string}
                                 </p>
                             </section>
                         </AccordionContent>

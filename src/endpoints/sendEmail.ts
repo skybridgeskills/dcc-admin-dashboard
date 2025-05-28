@@ -83,6 +83,7 @@ export const sendEmail: PayloadHandler = async (req, res) => {
             });
         }
         console.log('///emailsData', email);
+        // @ts-ignore
         emailQueue.add('send-test-email', email);
 
         res.status(200).json({ email, link });

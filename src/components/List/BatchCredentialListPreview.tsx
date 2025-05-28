@@ -47,7 +47,7 @@ const BatchCredentialListPreview: React.FC<BatchCredentialListPreviewProps> = ({
     console.log('//formattedDocs', formattedDocs);
 
     if (collection.upload) {
-        formattedDocs = formattedDocs?.map(doc => {
+        formattedDocs = formattedDocs?.map((doc: any) => {
             return { ...doc, filesize: formatFilesize(doc.filesize) };
         });
     }
@@ -74,6 +74,7 @@ const BatchCredentialListPreview: React.FC<BatchCredentialListPreviewProps> = ({
                 renderCell: (rowData, cellData) => (
                     <Cell
                         key={JSON.stringify(cellData)}
+                        // @ts-ignore
                         field={
                             (field as any).name === 'actionButton'
                                 ? {
@@ -152,6 +153,7 @@ const BatchCredentialListPreview: React.FC<BatchCredentialListPreviewProps> = ({
                     )}
                     {data.docs && data.docs.length === 0 && (
                         <div className={`${baseClass}__no-results`}>
+                            {/* @ts-ignore */}
                             <p>{t('noResults', { label: getTranslation('Credentials', i18n) })}</p>
                         </div>
                     )}

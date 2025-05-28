@@ -63,7 +63,7 @@ const getFieldValuesWithValidators = (
     return (
         fieldsForStep?.map(fieldName => ({
             value: fieldValues[fieldName].value,
-            validate: fieldsCollection.find(field => (field as any).name === fieldName).validate,
+            validate: (fieldsCollection.find(field => (field as any).name === fieldName) as any).validate,
         })) ?? []
     );
 };
@@ -172,7 +172,8 @@ const RenderSlide = React.forwardRef<HTMLElement, RenderSlideProps>(function Ren
                         <div className="missing-field" key={fieldIndex}>
                             {t('error:noMatchedField', {
                                 label: fieldAffectsData(field)
-                                    ? getTranslation(field.label || field.name, i18n)
+                                    // @ts-ignore
+                                    ? getTranslation(field.label || field.name, i18n) as string
                                     : field.path,
                             })}
                         </div>

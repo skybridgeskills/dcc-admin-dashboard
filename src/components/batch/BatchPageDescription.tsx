@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useConfig } from 'payload/dist/admin/components/utilities/Config';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { totalSentBatchesQuery } from '../../constants/countQueries';
 
 const BatchPageDescription: React.FC = () => {
@@ -39,14 +39,14 @@ const BatchPageDescription: React.FC = () => {
                 <p className="header_paragraph">
                     <span className="header_number">{count}</span> Issued Batches
                 </p>
-                <Link
+                <NavLink
                     className="header_button"
                     activeClassName="active"
                     to={`${adminRoute}/collections/credential-batch/create`}
                 >
                     <img className="header_plus_icon" src="/assets/plus-icon.svg" alt="plus icon" />
                     Upload and Prepare Batch
-                </Link>
+                </NavLink>
             </div>
         </div>
     );

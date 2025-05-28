@@ -34,4 +34,4 @@ jobs:
                   dockerfile: Dockerfile
                   platforms: linux/amd64,linux/arm64
                   push: true
-                  tags: skybridgeskills/dcc-admin-dashboard:latest
+                  tags: skybridgeskills/dcc-admin-dashboard:${{ github.sha }}

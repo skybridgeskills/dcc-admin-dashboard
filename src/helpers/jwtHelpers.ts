@@ -6,6 +6,7 @@ const expires = process.env.TOKEN_EXPIRATION_TIME_IN_SECONDS ?? 14 * 24 * 60 * 6
 
 export const generateJwtFromId = (id: string) => {
     try {
+        // @ts-ignore
         const token = jwt.sign({ id }, secret, { ...(expires && { expiresIn: expires }) });
         return token;
     } catch (e) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useConfig } from 'payload/dist/admin/components/utilities/Config';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import './template.scss';
 import { totalCredentialTemplatePublishedQuery } from '../../constants/countQueries';
 
@@ -40,14 +40,14 @@ const TemplatePageDescription: React.FC = () => {
                 <span className="header_number">{count}</span> Published Templates
             </p>
 
-            <Link
+            <NavLink
                 className="header_template_button"
                 activeClassName="active"
                 to={`${adminRoute}/collections/credential-template/create`}
             >
                 <img className="plus_icon" src="/assets/plus-icon.svg" alt="plus icon" />
                 Create New Template
-            </Link>
+            </NavLink>
         </div>
     );
 };

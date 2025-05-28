@@ -76,6 +76,7 @@ export const getCredentialJwt: PayloadHandler = async (req, res) => {
     if (!id || typeof id !== 'string') return res.sendStatus(400);
 
     try {
+        // @ts-ignore
         const token = jwt.sign({ id }, secret, { ...(expires && { expiresIn: expires }) });
 
         res.status(200).json({ token });

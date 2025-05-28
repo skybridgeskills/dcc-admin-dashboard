@@ -39,7 +39,7 @@ const SelectEmailTemplate = React.forwardRef<HTMLElement, SelectEmailTemplatePro
         } = formProps;
 
        // const fromSchema = fieldSchema.find(field => field.name === 'from');
-        const emailTemplateSchema = fieldSchema.find(field => field.name === 'emailTemplate');
+        const emailTemplateSchema = fieldSchema.find(({name}: any) => name === 'emailTemplate');
 
         useEffect(() => {
             if (templateId) {
@@ -123,7 +123,7 @@ const SelectEmailTemplate = React.forwardRef<HTMLElement, SelectEmailTemplatePro
                             ...(emailTemplateSchema.admin || {}),
                             readOnly,
                         },
-                        permissions: permissions?.[emailTemplateSchema.name],
+                        permissions: permissions?.[(emailTemplateSchema as any).name],
                     }}
                 />
             </section>

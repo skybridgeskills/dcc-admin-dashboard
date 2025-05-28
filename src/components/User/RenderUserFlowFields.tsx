@@ -100,6 +100,7 @@ const RenderSlide = React.forwardRef<HTMLElement, RenderSlideProps>(function Ren
                         <div className="missing-field" key={fieldIndex}>
                             {t('error:noMatchedField', {
                                 label: fieldAffectsData(field)
+                                    // @ts-ignore
                                     ? getTranslation(field.label || field.name, i18n)
                                     : field.path,
                             })}
