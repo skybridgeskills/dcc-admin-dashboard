@@ -24,8 +24,15 @@ ENV PAYLOAD_CONFIG_PATH=dist/payload.config.js
 WORKDIR /home/node/app
 COPY package.json ./
 
+# Install build dependencies
+RUN apk add --no-cache python3 make g++ gcc
+
 RUN npm i -g pnpm
 RUN pnpm i --production
+RUN npm rebuild --platform=linuxmusl --arch=arm64v8 sharp
+
+# Clean up build dependencies
+RUN apk del python3 make g++ gcc
 
 COPY --from=builder /home/node/app/dist/ ./dist
 COPY --from=builder /home/node/app/build/ ./build
