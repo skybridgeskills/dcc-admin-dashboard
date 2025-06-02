@@ -152,7 +152,7 @@ Here is the json that you can paste into that 'Credential Template Json' field:
   },
   "@context": [
     "https://www.w3.org/2018/credentials/v1",
-    "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.1.json"
+    "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json"
   ],
   "credentialSubject": {
     "type": [

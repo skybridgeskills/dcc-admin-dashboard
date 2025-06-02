@@ -2,6 +2,8 @@ import {
   SecretsManagerClient,
   GetSecretValueCommand,
   ListSecretsCommand,
+  SecretListEntry,
+  ListSecretsCommandOutput,
 } from '@aws-sdk/client-secrets-manager';
 import { ResourceNotFoundException } from '@aws-sdk/client-secrets-manager';
 import { S3Client, GetObjectCommand, NoSuchKey } from '@aws-sdk/client-s3';
@@ -16,15 +18,33 @@ const s3Client = new S3Client({});
 
 export async function ingestTenantsFromAws() {
   try {
-    const listCommand = new ListSecretsCommand({});
-    const listResponse = await secretsClient.send(listCommand);
+    let NextToken: string | undefined = 'INITIAL';
+    let SecretList: SecretListEntry[] = [];
 
-    if (!listResponse.SecretList?.length) {
+    while (NextToken) {
+      NextToken = NextToken === 'INITIAL' ? undefined : NextToken;
+      const listCommand = new ListSecretsCommand({
+        Filters: [
+          {
+            Key: 'name',
+            Values: ['tenant']
+          }
+        ],
+        MaxResults: 100,
+        NextToken
+      });
+      const result: ListSecretsCommandOutput = await secretsClient.send(listCommand);
+      NextToken = result.NextToken;
+      SecretList = [...SecretList, ...(result.SecretList || [])];
+    }
+
+
+    if (!SecretList?.length) {
       console.log('No secrets found in AWS Secrets Manager');
       return;
     }
 
-    for (const secret of listResponse.SecretList) {
+    for (const secret of SecretList) {
       try {
         // Try to get the secret with version stage
         const getCommand = new GetSecretValueCommand({
