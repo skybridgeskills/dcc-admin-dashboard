@@ -16,6 +16,7 @@ const isBuildContext = process.argv.includes('build');
 const connection = {
     host: redisUrl,
     port: redisPort,
+    tls: {}
 };
 
 type AugmentedQueue<T> = Queue<T> & {
