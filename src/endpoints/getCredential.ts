@@ -3,6 +3,7 @@ import { PayloadHandler } from 'payload/config';
 import payload from 'payload';
 import jwt from 'jsonwebtoken';
 import { insertValuesIntoHandlebarsJsonTemplate } from '../helpers/handlebarhelpers';
+import { toTenant } from '../helpers/tenant';
 
 const secret =
   process.env.PAYLOAD_SECRET ??
@@ -33,10 +34,15 @@ export const getCredential: PayloadHandler = async (req, res) => {
       id,
       collection: 'credential',
       depth: 3,
+      showHiddenFields: true,
     });
 
     if (credential.status === 'REVOKED') {
       return res.status(410).json({ reason: 'Credential has been revoked' });
+    }
+
+    if (credential.tenant !== toTenant(req.headers.host)) {
+      return res.status(401).json({ reason: 'Credential tenant mismatch' });
     }
 
     if (
@@ -66,7 +72,7 @@ export const getCredential: PayloadHandler = async (req, res) => {
 
     res.status(200).json(
       {
-        ...builtCredential,
+        credential: builtCredential,
         extra: {
           credentialName: credential.credentialName,
           earnerName: credential.earnerName,
